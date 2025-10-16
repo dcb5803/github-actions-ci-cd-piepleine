@@ -31,11 +31,12 @@ jobs:
     # 4️⃣ Run tests safely (no mkdir errors)
     - name: Run tests
       run: |
-        find tests -name "*.py" | grep . || {
+        test_files=$(find tests -name "*.py" 2>/dev/null || true)
+        if [ -z "$test_files" ]; then
           echo "⚠️ No tests found. Creating dummy test..."
-          mkdir -p tests
+          mkdir -p tests || true
           echo "def test_dummy(): assert 1 + 1 == 2" > tests/test_dummy.py
-        }
+        fi
         pytest tests/ --maxfail=1 --disable-warnings -q
 
     # 5️⃣ Deploy (optional)
